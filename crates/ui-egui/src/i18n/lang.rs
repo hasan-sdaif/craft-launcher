@@ -44,6 +44,10 @@ pub struct LangInfo {
     pub plural_forms: usize,
     /// Must the catalog cover every `tl!` literal? (checked by tests)
     pub complete_menus: bool,
+    /// Do the language's labels read right to left? Their translations are stored in visual
+    /// order for egui's run-by-run layout (see `bidi.rs`), so their lookups draw left-to-right
+    /// runs in the order a right-to-left reader meets them.
+    pub rtl: bool,
     catalog: OnceLock<Catalog>,
 }
 
@@ -119,6 +123,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_one_other,
         plural_forms: 2,
         complete_menus: false,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -130,6 +135,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_east_slavic,
         plural_forms: 3,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -141,6 +147,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_none,
         plural_forms: 1,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -152,6 +159,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_one_other,
         plural_forms: 2,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -163,6 +171,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_zero_one,
         plural_forms: 2,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -174,6 +183,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_one_other,
         plural_forms: 2,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -185,6 +195,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_one_other,
         plural_forms: 2,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -196,6 +207,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_czech,
         plural_forms: 3,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -207,6 +219,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_polish,
         plural_forms: 3,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -218,6 +231,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_one_other,
         plural_forms: 2,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -229,6 +243,7 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_none,
         plural_forms: 1,
         complete_menus: true,
+        rtl: false,
         catalog: OnceLock::new(),
     },
     LangInfo {
@@ -240,13 +255,14 @@ pub static LANGUAGES: [LangInfo; 12] = [
         plural: plural_arabic,
         plural_forms: 6,
         complete_menus: true,
+        rtl: true,
         catalog: OnceLock::new(),
     },
 ];
 
 impl LangInfo {
     pub(super) fn catalog(&self) -> &Catalog {
-        self.catalog.get_or_init(|| Catalog::parse(self.source))
+        self.catalog.get_or_init(|| Catalog::parse(self.source, self.rtl))
     }
 }
 

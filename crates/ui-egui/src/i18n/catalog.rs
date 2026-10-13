@@ -99,8 +99,10 @@ impl Template {
 }
 
 impl Catalog {
-    /// Parse a catalog from TSV content. Malformed rows are logged and skipped.
-    pub fn parse(source: &str) -> Self {
+    /// Parse a catalog from TSV content. Malformed rows are logged and skipped. A
+    /// right-to-left language's translations are stored in visual order — the order egui draws
+    /// its runs in (`bidi.rs`) — so the lookups read right to left.
+    pub fn parse(source: &str, rtl: bool) -> Self {
         let mut cat = Catalog::default();
         for (line_no, line) in source.lines().enumerate() {
             let line_no = line_no + 1;
@@ -115,6 +117,7 @@ impl Catalog {
                 continue;
             };
             let (context, source_text, translation) = (unescape(context), unescape(source_text), unescape(translation));
+            let translation = if rtl { super::bidi::visual_rtl(&translation) } else { translation };
             let duplicate = match context.as_str() {
                 "" => cat.plain.insert(source_text.clone(), translation).is_some(),
                 "@id" => cat.by_id.insert(source_text.clone(), translation).is_some(),
