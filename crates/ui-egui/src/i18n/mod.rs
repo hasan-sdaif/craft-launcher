@@ -27,7 +27,7 @@
 //!   rows hold whole messages or templates such as `Couldn't open {name}: {e}`, whose
 //!   placeholders match any text and are carried over into the translation.
 
-mod bidi;
+pub(crate) mod bidi;
 mod catalog;
 mod detect;
 mod lang;
